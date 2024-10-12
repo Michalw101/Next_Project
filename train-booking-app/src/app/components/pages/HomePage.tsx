@@ -3,13 +3,25 @@ import React, { useEffect } from 'react';
 import Link from 'next/link';
 import Search from './Search';
 import About from '../About';
-const connect = require('../../../../connect') ;
+const  usersModel  = require('../../../../connect');
+const connectDB = require('../../../../DB')
 
 function HomePage() {
-  useEffect(()=>{
-    const users = connect.getUser(1);
-    console.log(users);
-  },)
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        // התחברות למונגו דיבי
+        await connectDB();
+        // קבלת משתמש על ידי ID
+        const user = await usersModel.findOne({ id: 1 });
+        console.log("user", user);
+      } catch (error) {
+        console.error("Error fetching user:", error);
+      }
+    };
+
+    fetchUser();
+  }, []);
   return (
     <>
       {/* תפריט ניווט */}
