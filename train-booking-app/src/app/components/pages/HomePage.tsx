@@ -3,24 +3,34 @@ import React, { useEffect } from 'react';
 import Link from 'next/link';
 import Search from './Search';
 import About from '../About';
-const  usersModel  = require('../../../../connect');
-const connectDB = require('../../../../DB')
+
 
 function HomePage() {
+  const user = {
+    // id: "214859415",
+    email: "a@a.a",
+    name: "michal",
+    password: "1234"
+  };
+
   useEffect(() => {
-    const fetchUser = async () => {
+    const sendData = async () => {
       try {
-        // התחברות למונגו דיבי
-        await connectDB();
-        // קבלת משתמש על ידי ID
-        const user = await usersModel.findOne({ id: 1 });
-        console.log("user", user);
+        const response = await fetch("http://localhost:3000/api", {
+          method: "POST",
+          body: JSON.stringify(user),
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+        const data = await response.json();
+        console.log(data);
       } catch (error) {
-        console.error("Error fetching user:", error);
+        console.log(error);
       }
     };
 
-    fetchUser();
+    sendData();
   }, []);
   return (
     <>
