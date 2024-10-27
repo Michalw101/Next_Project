@@ -1,8 +1,9 @@
 "use client"
 import React, { useEffect } from 'react';
 import Link from 'next/link';
-import Search from './Search';
+import Search from '../Search';
 import About from '../About';
+
 
 
 function HomePage() {
@@ -35,7 +36,7 @@ function HomePage() {
   return (
     <>
       {/* תפריט ניווט */}
-      <div className="min-h-screen">
+      <div className="">
         <nav className="bg-gray-800 text-white p-4">
           <ul className="flex justify-around">
             <li>
