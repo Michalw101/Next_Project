@@ -1,8 +1,9 @@
 
+import Login from "../../components/pages/login"
 
 function page() {
   return (
-    <div>login</div>
+  <Login />
   )
 }
 
