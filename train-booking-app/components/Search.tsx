@@ -1,9 +1,15 @@
 "use client";
-import React, { useState, ChangeEvent } from "react";
+import React, { useState, ChangeEvent, useEffect } from "react";
 import DatePicker from "react-datepicker"; // Import the DatePicker component
 import "react-datepicker/dist/react-datepicker.css"; // Import the DatePicker styles
 
+
+
+
+
 function Search() {
+
+
   const [adults, setAdults] = useState<number>(1); // Default 1 adult
   const [children, setChildren] = useState<number>(0); // Default 0 children
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false); // Modal visibility state
@@ -13,8 +19,9 @@ function Search() {
   const [suggestions, setSuggestions] = useState<string[]>([]); // Autocomplete suggestions
   const [currentField, setCurrentField] = useState<"from" | "to" | null>(null); // Track which field is being updated
 
-  const locations: string[] = ["London", "Los Angeles", "Lisbon", "Lyon"]; // List of locations
-
+  var cities = require('cities');
+ // List of locations
+  const locations: string[] = cities.findByState('NJ').map((city :any) => city.city);
   const openModal = () => {
     setIsModalOpen(true);
   };
@@ -64,6 +71,7 @@ function Search() {
     }
     return label || "No passengers"; // If both are 0, show "No passengers"
   };
+
 
   return (
     <div className="h-screen w-screen bg-gradient-to-r from-purple-400 via-pink-500 to-red-500">
