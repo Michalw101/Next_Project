@@ -2,14 +2,9 @@
 import React, { useState, ChangeEvent, useEffect } from "react";
 import DatePicker from "react-datepicker"; // Import the DatePicker component
 import "react-datepicker/dist/react-datepicker.css"; // Import the DatePicker styles
-
-
-
-
+import axios from "axios"; // Import axios for making API requests
 
 function Search() {
-
-
   const [adults, setAdults] = useState<number>(1); // Default 1 adult
   const [children, setChildren] = useState<number>(0); // Default 0 children
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false); // Modal visibility state
@@ -20,8 +15,9 @@ function Search() {
   const [currentField, setCurrentField] = useState<"from" | "to" | null>(null); // Track which field is being updated
 
   var cities = require('cities');
- // List of locations
-  const locations: string[] = cities.findByState('NJ').map((city :any) => city.city);
+  // List of locations
+  const locations: string[] = cities.findByState('NJ').map((city: any) => city.city);
+
   const openModal = () => {
     setIsModalOpen(true);
   };
@@ -72,6 +68,29 @@ function Search() {
     return label || "No passengers"; // If both are 0, show "No passengers"
   };
 
+  // Function to check available trips
+  const checkAvailableTrips = async () => {
+    if (!fromLocation || !toLocation || !departureDate) {
+      alert("Please fill in all fields.");
+      return;
+    }
+
+    try {
+      const response = await axios.get('/api/check-trips', {
+        params: {
+          fromLocation,
+          toLocation,
+          departureDate: departureDate.toISOString(),
+          adults,
+          children,
+        },
+      });
+      alert(response.data.message); // Display message to the user
+    } catch (error) {
+      console.error("Error checking trips:", error);
+      alert("Error checking trips. Please try again later.");
+    }
+  };
 
   return (
     <div className="h-screen w-screen bg-gradient-to-r from-purple-400 via-pink-500 to-red-500">
@@ -141,7 +160,10 @@ function Search() {
           </div>
 
           {/* Search Button */}
-          <button className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded mt-4">
+          <button
+            className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded mt-4"
+            onClick={checkAvailableTrips} // Call the checkAvailableTrips function on click
+          >
             Search
           </button>
 
@@ -194,16 +216,16 @@ function Search() {
                 {/* Close/Submit buttons */}
                 <div className="flex justify-end space-x-2">
                   <button
-                    className="bg-gray-300 px-4 py-2 rounded hover:bg-gray-400 transition"
+                    className="bg-red-500 text-white font-bold py-2 px-4 rounded hover:bg-red-600 transition"
                     onClick={closeModal}
                   >
-                    Cancel
+                    Close
                   </button>
                   <button
-                    className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition"
+                    className="bg-blue-500 text-white font-bold py-2 px-4 rounded hover:bg-blue-600 transition"
                     onClick={closeModal}
                   >
-                    Confirm
+                    Submit
                   </button>
                 </div>
               </div>
