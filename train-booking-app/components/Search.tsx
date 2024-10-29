@@ -66,9 +66,9 @@ function Search() {
   };
 
   return (
-    <div className="h-screen w-screen bg-gradient-to-r from-purple-400 via-pink-500 to-red-500">
-      <div className="container h-screen mx-auto flex justify-center items-center p-2 md:p-0">
-        <div className="border border-gray-300 p-6 bg-white shadow-lg rounded-lg w-full max-w-lg">
+     <div className="bg-gradient-to-r from-purple-400 via-pink-500 to-red-500">
+       <div className="container h-screen mx-auto flex justify-center items-center p-2 md:p-0">
+         <div className="border border-gray-300 p-6 bg-white shadow-lg rounded-lg w-full max-w-lg">
           {/* From Location Input */}
           <div className="relative mb-4">
             <span className="absolute left-3 top-2 text-gray-500">From</span>
