@@ -8,7 +8,7 @@ import About from '../About';
 
 function HomePage() {
   const user = {
-    // id: "214859415",
+    user_id: "214859415",
     email: "a@a.a",
     name: "michal",
     password: "1234"
@@ -17,7 +17,7 @@ function HomePage() {
   useEffect(() => {
     const sendData = async () => {
       try {
-        const response = await fetch("http://localhost:3000/api", {
+        const response = await fetch("http://localhost:3000/api/users", {
           method: "POST",
           body: JSON.stringify(user),
           headers: {
