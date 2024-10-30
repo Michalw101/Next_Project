@@ -15,8 +15,9 @@ export default function LoginForm() {
       email: target.email.value,
       password: target.password.value,
     };
+
     try {
-      const credential = await signIn("credentials", { ...values });
+      const credential = await signIn("credentials", { ...values , callbackUrl:"/" });
       console.log("credential", credential);
     } catch (error) {
       console.log(error);
@@ -97,7 +98,7 @@ export default function LoginForm() {
       {/* Google BTN */}
       <div className="flex w-full flex-col justify-center items-center gap-4">
         <button
-          onClick={() => signIn("google")}
+          onClick={() => signIn("google", {callbackUrl:"/"})}
           className="flex w-[80%] items-center justify-center bg-white
          dark:bg-gray-900 border border-gray-300 rounded-lg 
          shadow-md px-6 py-2 text-sm font-medium text-gray-800
