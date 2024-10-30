@@ -1,15 +1,13 @@
 "use client"
 import React, { useEffect } from 'react';
-import Link from 'next/link';
 import Search from '../Search';
-import About from '../About';
 
 
 
 function HomePage() {
   const user = {
-    user_id: "214859415",
-    email: "a@a.a",
+    user_id: "123456",
+    email: "b@a.a",
     name: "michal",
     password: "1234"
   };
@@ -33,8 +31,11 @@ function HomePage() {
 
     sendData();
   }, []);
+
+  
   return (
     <>
+<<<<<<< HEAD
       {/* תפריט ניווט */}
       <div className="">
         <nav className="bg-gray-800 text-white p-4">
@@ -78,6 +79,9 @@ function HomePage() {
       <div id="about-section">
         <About />
       </div>
+=======
+      <Search />
+>>>>>>> c170256f30011da239624a8ad393e4f569416fbe
     </>
   );
 }

@@ -1,44 +1,43 @@
-
 generator client {
-    provider = "prisma-client-js"
-  }
-  
-  datasource db {
-    provider = "mongodb"
-    url      = env("DATABASE_URL")
-  }
-  
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
 model Users {
-  id      String   @id @default(auto()) @map("_id") @db.ObjectId 
-  user_id  String   @unique            
-  email    String   @unique            
-  name     String?                      
-  password String?                      
+  id       String  @id @default(auto()) @map("_id") @db.ObjectId
+  user_id  String  @unique
+  email    String  @unique
+  name     String?
+  password String?
 }
 
 model Service {
-  id               String          @id @default(auto()) @map("_id") @db.ObjectId
-  exit             String
-  destination      String
-  price            Int
-  availableSeatsA  Int
-  availableSeatsB  Int
-  type             String
-  regularService   RegularService?
-  oneTimeService   OneTimeService?
+  id              String          @id @default(auto()) @map("_id") @db.ObjectId
+  exit            String
+  destination     String
+  price           Int
+  availableSeatsA Int
+  availableSeatsB Int
+  type            String
+  regularService  RegularService?
+  oneTimeService  OneTimeService?
 }
 
 model RegularService {
-  id          String   @id @default(auto()) @map("_id") @db.ObjectId
-  frequency   String
-  startTime   DateTime
-  service     Service  @relation(fields: [serviceId], references: [id])
-  serviceId   String   @unique  @db.ObjectId
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  frequency String
+  startTime DateTime
+  service   Service  @relation(fields: [serviceId], references: [id])
+  serviceId String   @unique @db.ObjectId
 }
 
 model OneTimeService {
-  id          String   @id @default(auto())  @map("_id") @db.ObjectId
-  date        DateTime
-  service     Service  @relation(fields: [serviceId], references: [id])
-  serviceId   String   @unique  @db.ObjectId
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  date      DateTime
+  service   Service  @relation(fields: [serviceId], references: [id])
+  serviceId String   @unique @db.ObjectId
 }

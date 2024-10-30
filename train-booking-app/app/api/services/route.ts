@@ -7,12 +7,20 @@ export async function POST(request: Request) {
         const body = await request.json();
         console.log("body", body);
 
+<<<<<<< HEAD
         // הוספת שירות חדש
         const service = await prisma.service.create({
             data: body
         });
 
         return NextResponse.json({ message: "success post service", success: true, service });
+=======
+        const service = await prisma.Services.create({
+            data: body
+        })
+
+        return NextResponse.json({ message: "success post user", success: true, service });
+>>>>>>> c170256f30011da239624a8ad393e4f569416fbe
     } catch (error) {
         console.log(error);
         return NextResponse.json({ message: "failed post service", success: false });
