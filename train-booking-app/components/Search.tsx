@@ -74,23 +74,33 @@ function Search() {
       alert("Please fill in all fields.");
       return;
     }
-
+  
+    const queryParams = new URLSearchParams({
+      fromLocation,
+      toLocation,
+      departureDate: departureDate.toISOString(),
+      adults: adults.toString(),
+      children: children.toString(),
+    }).toString();
+  
     try {
-      const response = await axios.get('/api/check-trips', {
-        params: {
-          fromLocation,
-          toLocation,
-          departureDate: departureDate.toISOString(),
-          adults,
-          children,
+      const response = await fetch(`http://localhost:3000/api/services?${queryParams}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
         },
       });
-      alert(response.data.message); // Display message to the user
+      const data = await response.json();
+      console.log(data+"sssss");
+      
+      alert(data.message); // הצגת ההודעה למשתמש
     } catch (error) {
       console.error("Error checking trips:", error);
       alert("Error checking trips. Please try again later.");
     }
   };
+  
+
 
   return (
     <div className="h-screen w-screen bg-gradient-to-r from-purple-400 via-pink-500 to-red-500">
