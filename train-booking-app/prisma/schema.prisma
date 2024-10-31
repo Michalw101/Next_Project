@@ -9,7 +9,6 @@ datasource db {
 
 model Users {
   id       String  @id @default(auto()) @map("_id") @db.ObjectId
-  user_id  String  @unique
   email    String  @unique
   name     String?
   password String?
@@ -22,22 +21,42 @@ model Service {
   price           Int
   availableSeatsA Int
   availableSeatsB Int
-  type            String
-  regularService  RegularService?
-  oneTimeService  OneTimeService?
+  typeId          String?         @db.ObjectId
+  // type            Type?           @relation("ServiceType", fields: [typeId], references: [id])
+  regularService  RegularService? @relation("RegularServiceService")  
+  oneTimeService  OneTimeService? @relation("OneTimeServiceService") 
 }
 
+// model Type {
+//   id      String    @id @default(auto()) @map("_id") @db.ObjectId
+//   name    String
+//   services Service[] @relation("ServiceType") 
+// }
+
 model RegularService {
-  id        String   @id @default(auto()) @map("_id") @db.ObjectId
-  frequency String
-  startTime DateTime
-  service   Service  @relation(fields: [serviceId], references: [id])
-  serviceId String   @unique @db.ObjectId
+  id             String            @id @default(auto()) @map("_id") @db.ObjectId
+  frequency      String
+  startTime      DateTime
+  endDate        DateTime?
+  service        Service           @relation("RegularServiceService", fields: [serviceId], references: [id])
+  serviceId      String            @unique @db.ObjectId
+  schedules      ServiceSchedule[] @relation("RegularServiceSchedules")
 }
 
 model OneTimeService {
   id        String   @id @default(auto()) @map("_id") @db.ObjectId
   date      DateTime
-  service   Service  @relation(fields: [serviceId], references: [id])
+  service   Service  @relation("OneTimeServiceService", fields: [serviceId], references: [id])
   serviceId String   @unique @db.ObjectId
+}
+
+model ServiceSchedule {
+  id               String         @id @default(auto()) @map("_id") @db.ObjectId
+  dayOfWeek        Int
+  startTime        DateTime
+  endTime          DateTime?
+  frequency        Int
+  status           String?
+  regularService   RegularService @relation("RegularServiceSchedules", fields: [regularServiceId], references: [id])
+  regularServiceId String         @db.ObjectId
 }
