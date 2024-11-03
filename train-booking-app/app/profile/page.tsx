@@ -1,10 +1,8 @@
-
+import Profile from "../../components/pages/Profile"
 
 function page() {
   return (
-    <div>
-        
-    </div>
+ <Profile/>
   )
 }
 
