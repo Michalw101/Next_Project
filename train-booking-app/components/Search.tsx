@@ -88,7 +88,7 @@ function Search() {
       
       // Check if there are available services
       if (data.services && data.services.length > 0) {
-        const availableServices = data.services.filter(service => {
+        const availableServices = data.services.filter((service:any) => {
           // Check if available seats are enough
           return service.availableSeatsA >= aduls && service.availableSeatsB >= children;
         });
@@ -165,7 +165,7 @@ function Search() {
             />
           </div>
 
-          {/* Button to open the modal for selecting aduls and children */}
+          {/* Button to open the modal for selecting adults and children */}
           <div className="flex justify-between items-center mb-4">
             <span className="font-bold text-lg">{getPassengerLabel()}</span>
             <button

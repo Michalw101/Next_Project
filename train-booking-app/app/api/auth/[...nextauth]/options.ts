@@ -20,7 +20,7 @@ export const authOptions: NextAuthOptions = {
       },
       async authorize(credentials) {
         if (!credentials?.email || !credentials?.password) return null;
-        const user = await prisma.Users.findUnique({
+        const user = await prisma.users.findUnique({
           where: { email: credentials.email },
         });
         
@@ -42,7 +42,7 @@ export const authOptions: NextAuthOptions = {
     async signIn({ user, account }) {
       if(!user || !user.email) return false;
       if(account?.provider === "google"){
-        await prisma.Users.upsert({
+        await prisma.users.upsert({
           where:{
             email:user.email
           },
@@ -52,7 +52,6 @@ export const authOptions: NextAuthOptions = {
           create: {
             email:user.email,
             name:user.name,
-            user_id:"1212",
           },
         })
       }

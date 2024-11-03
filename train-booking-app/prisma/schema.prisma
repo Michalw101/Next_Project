@@ -22,16 +22,10 @@ model Service {
   availableSeatsA Int
   availableSeatsB Int
   typeId          String?         @db.ObjectId
-  // type            Type?           @relation("ServiceType", fields: [typeId], references: [id])
   regularService  RegularService? @relation("RegularServiceService")  
   oneTimeService  OneTimeService? @relation("OneTimeServiceService") 
 }
 
-// model Type {
-//   id      String    @id @default(auto()) @map("_id") @db.ObjectId
-//   name    String
-//   services Service[] @relation("ServiceType") 
-// }
 
 model RegularService {
   id             String            @id @default(auto()) @map("_id") @db.ObjectId
