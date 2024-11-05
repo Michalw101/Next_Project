@@ -212,11 +212,6 @@ export default Search;
 
 
 
-
-
-
-
-
 // "use client";
 // import React, { useState, ChangeEvent } from "react";
 // import DatePicker from "react-datepicker";
