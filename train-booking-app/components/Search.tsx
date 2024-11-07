@@ -75,7 +75,7 @@ function Search() {
     const queryParams = new URLSearchParams({
       fromLocation,
       toLocation,
-      time: departureDate.toISOString(),
+      time: departureDate.toString(),
       passengers: (adults + children).toString()
     }).toString();
 
@@ -90,15 +90,7 @@ function Search() {
       const data = await response.json();
 
       if (data.services && data.services.length > 0) {
-        const availableServices = data.services.filter((service: any) => {
-          return service.availableSeatsA >= adults && service.availableSeatsB >= children;
-        });
-
-        if (availableServices.length > 0) {
-          setResults(availableServices);
-        } else {
-          alert("No seats available for the requested number of passengers.");
-        }
+        setResults(data.services);
       } else {
         alert("No services available based on the selected criteria.");
       }
@@ -109,146 +101,126 @@ function Search() {
   };
 
   return (
-   
-      <div className="container h-screen mx-auto flex justify-center items-center p-2 md:p-0">
-        <div className="border border-gray-300 p-6 bg-white shadow-lg rounded-lg w-full max-w-lg text-black">
-          <div className="relative mb-4">
-            <span className="absolute left-3 top-2 text-gray-500">From</span>
-            <input
-              type="text"
-              className="border p-2 pl-20 rounded w-full text-black"
-              value={fromLocation}
-              onChange={(e) => handleLocationChange(e, "from")}
-              placeholder="Enter departure city"
-            />
-          </div>
 
-          <div className="relative mb-4">
-            <span className="absolute left-3 top-2 text-gray-500">To</span>
-            <input
-              type="text"
-              className="border p-2 pl-20 rounded w-full text-black"
-              value={toLocation}
-              onChange={(e) => handleLocationChange(e, "to")}
-              placeholder="Enter destination city"
-            />
-          </div>
+    <div className="container h-screen mx-auto flex justify-center items-center p-2 md:p-0">
+      <div className="border border-gray-300 p-6 bg-white shadow-lg rounded-lg w-full max-w-lg text-black">
+        <div className="relative mb-4">
+          <span className="absolute left-3 top-2 text-gray-500">From</span>
+          <input
+            type="text"
+            className="border p-2 pl-20 rounded w-full text-black"
+            value={fromLocation}
+            onChange={(e) => handleLocationChange(e, "from")}
+            placeholder="Enter departure city"
+          />
+        </div>
 
-          {suggestions.length > 0 && (
-            <ul className="absolute border bg-white w-full mt-1 rounded z-10 text-black">
-              {suggestions.map((suggestion, index) => (
-                <li
-                  key={index}
-                  className="p-2 cursor-pointer hover:bg-gray-200"
-                  onClick={() => handleSuggestionClick(suggestion)}
-                >
-                  {suggestion}
-                </li>
-              ))}
-            </ul>
-          )}
+        <div className="relative mb-4">
+          <span className="absolute left-3 top-2 text-gray-500">To</span>
+          <input
+            type="text"
+            className="border p-2 pl-20 rounded w-full text-black"
+            value={toLocation}
+            onChange={(e) => handleLocationChange(e, "to")}
+            placeholder="Enter destination city"
+          />
+        </div>
 
-          <div className="relative mb-4">
-            <span className="absolute left-3 top-2 text-gray-500">Out</span>
-            <DatePicker
-              selected={departureDate}
-              onChange={(date) => setDepartureDate(date)}
-              showTimeSelect
-              dateFormat="Pp"
-              className="border p-2 pl-20 rounded w-full text-black"
-              placeholderText="Select date and time"
-              minDate={new Date()}
-              minTime={departureDate && departureDate.toDateString() === new Date().toDateString() ? new Date() : new Date(new Date().setHours(0, 0))}
-              maxTime={new Date(new Date().setHours(23, 59))}
-            />
+        {suggestions.length > 0 && (
+          <ul className="absolute border bg-white w-full mt-1 rounded z-10 text-black">
+            {suggestions.map((suggestion, index) => (
+              <li
+                key={index}
+                className="p-2 cursor-pointer hover:bg-gray-200"
+                onClick={() => handleSuggestionClick(suggestion)}
+              >
+                {suggestion}
+              </li>
+            ))}
+          </ul>
+        )}
+
+        <div className="relative mb-4">
+          <span className="absolute left-3 top-2 text-gray-500">Out</span>
+          <DatePicker
+            selected={departureDate}
+            onChange={(date) => setDepartureDate(date)}
+            showTimeSelect
+            dateFormat="Pp"
+            className="border p-2 pl-20 rounded w-full text-black"
+            placeholderText="Select date and time"
+            minDate={new Date()}
+            minTime={departureDate && departureDate.toDateString() === new Date().toDateString() ? new Date() : new Date(new Date().setHours(0, 0))}
+            maxTime={new Date(new Date().setHours(23, 59))}
+          />
 
 
-          </div>
+        </div>
 
-          <div className="flex justify-between items-center mb-4">
-            <span className="font-bold text-lg">{getPassengerLabel()}</span>
-            <button
-              className="px-4 py-2 bg-blue-500 text-white font-bold rounded hover:bg-blue-600 transition"
-              onClick={openModal}
-            >
-              +
-            </button>
-          </div>
-
+        <div className="flex justify-between items-center mb-4">
+          <span className="font-bold text-lg">{getPassengerLabel()}</span>
           <button
-            className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded mt-4"
-            onClick={checkAvailableTrips}
+            className="px-4 py-2 bg-blue-500 text-white font-bold rounded hover:bg-blue-600 transition"
+            onClick={openModal}
           >
-            Search
+            +
           </button>
+        </div>
 
-          {modalOpen && (
-            <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-              <div className="bg-white p-6 rounded shadow-lg w-96">
-                <h2 className="text-xl font-bold mb-4">Select Passengers</h2>
-                <div className="mb-4">
-                  <label className="block mb-2">Adults</label>
-                  <input
-                    type="number"
-                    value={passengers.adults}
-                    onChange={(e) => handlePassengerChange(e, "adults")}
-                    className="border p-2 rounded w-full"
-                    min="0"
-                  />
-                </div>
-                <div className="mb-4">
-                  <label className="block mb-2">Children</label>
-                  <input
-                    type="number"
-                    value={passengers.children}
-                    onChange={(e) => handlePassengerChange(e, "children")}
-                    className="border p-2 rounded w-full"
-                    min="0"
-                  />
-                </div>
-                <button
-                  className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded"
-                  onClick={closeModal}
-                >
-                  Close
-                </button>
+        <button
+          className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded mt-4"
+          onClick={checkAvailableTrips}
+        >
+          Search
+        </button>
+
+        {modalOpen && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+            <div className="bg-white p-6 rounded shadow-lg w-96">
+              <h2 className="text-xl font-bold mb-4">Select Passengers</h2>
+              <div className="mb-4">
+                <label className="block mb-2">Adults</label>
+                <input
+                  type="number"
+                  value={passengers.adults}
+                  onChange={(e) => handlePassengerChange(e, "adults")}
+                  className="border p-2 rounded w-full"
+                  min="0"
+                />
               </div>
-            </div>
-          )}
-
-          {/* {results.length > 0 && (
-            <div className="mt-6">
-              <h2 className="text-lg font-bold mb-4">Available Routes</h2>
-              <div className="grid gap-4">
-
-
-                {results.map((result, index) => (
-                  <Service index={index} result={result} />
-                ))}
+              <div className="mb-4">
+                <label className="block mb-2">Children</label>
+                <input
+                  type="number"
+                  value={passengers.children}
+                  onChange={(e) => handlePassengerChange(e, "children")}
+                  className="border p-2 rounded w-full"
+                  min="0"
+                />
               </div>
+              <button
+                className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded"
+                onClick={closeModal}
+              >
+                Close
+              </button>
             </div>
-          )} */}
+          </div>
+        )}
 
-          {/*  */}
+        {results.length > 0 && (
           <div className="mt-6">
             <h2 className="text-lg font-bold mb-4">Available Routes</h2>
             <div className="grid gap-4">
-              <Service index={1} result={{
-                exit: "Station A",
-                destination: "Station B",
-                price: 50,
-                regularService: {
-                  schedules: [
-                    { startTime: "2024-11-11T08:00:00.000+00:00" }
-                  ]
-                },
-                frequency: 60
-              }} />
+
+
+              {results.map((result, index) => (
+                <Service index={index} result={result} />
+              ))}
             </div>
           </div>
-          {/*  */}
-
-        </div>
+        )}
+      </div>
     </div >
   );
 }
@@ -258,17 +230,20 @@ export default Search;
 type ServiceProps = {
   index: number;
   result: {
-    exit: string;
-    destination: string;
-    price: number;
-    regularService?: {
-      schedules: {
-        startTime: string;
-      }[];
+    line: {
+      id: string;
+      exit: string;
+      destination: string;
+      price: number;
+      availableSeats: number;
     };
-    frequency: number;
+  } & {
+    id: string;
+    hour: number;
+    lineId: string;
   };
-};
+}
+
 
 
 const Service: React.FC<ServiceProps> = ({ index, result }) => {
@@ -276,14 +251,13 @@ const Service: React.FC<ServiceProps> = ({ index, result }) => {
     <div key={index} className="border p-4 rounded shadow-md relative">
       <StarButton />
       <h3 className="text-md font-semibold">
-        {result.exit} → {result.destination}
+        {result.line.exit} → {result.line.destination}
       </h3>
-      <p>Price: ${result.price}</p>
-      <p>Departure Time: {result.regularService?.schedules[0]?.startTime ? new Date(result.regularService.schedules[0].startTime).toLocaleString() : 'N/A'}</p>
-      <p>Frequency: {result.frequency}</p>
+      <p>Price: ${result.line.price}</p>
+      <p>Hour: {result.hour}:00</p>
       <button
         className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded mt-4"
-      // onClick={selecStervice}
+      // onClick={selectService}
       >
         Select
       </button>

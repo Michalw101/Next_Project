@@ -14,95 +14,60 @@ export async function GET(request: Request) {
         const { searchParams } = new URL(request.url);
         const exit = searchParams.get("fromLocation");
         const destination = searchParams.get("toLocation");
-        const requestedTime = searchParams.get("time");
+        const dateTime = searchParams.get("time");
         const passengers = searchParams.get("passengers");
 
         // בדיקת פרמטרים חסרים
-        if (!exit || !destination || !requestedTime || !passengers) {
-            console.log(exit, destination, requestedTime, passengers);
+        if (!exit || !destination || !dateTime || !passengers) {
+            console.log(exit, destination, dateTime, passengers);
             return NextResponse.json({ message: "Missing required parameters", success: false });
         }
 
         // המרת פרמטר הזמן והנוסעים לאובייקטים המתאימים
-        const requestedDateTime = new Date(requestedTime);
+        const hour = parseInt(passengers, 10);
         const numPassengers = parseInt(passengers, 10);
 
-        if (isNaN(requestedDateTime.getTime()) || isNaN(numPassengers) || numPassengers <= 0) {
-            return NextResponse.json({ message: "Invalid time format or passengers number", success: false });
-        }
+        if (isNaN(hour) || hour < 0 || hour > 23)
+            return NextResponse.json({ message: "Invalid time format", success: false });
 
-        console.log("Requested DateTime:", requestedDateTime, "Passengers:", numPassengers);
+        if (isNaN(numPassengers) || numPassengers <= 0)
+            return NextResponse.json({ message: "passengers number", success: false });
 
-        // יצירת טווח הזמן להיום (התחלה ועד סוף היום)
-        const startOfDay = new Date(requestedDateTime.setHours(0, 0, 0, 0));
-        const endOfDay = new Date(requestedDateTime.setHours(23, 59, 59, 999));
 
-        /**
-         * פונקציה למציאת שירותי רכבת החל מהזמן המבוקש ועד סוף היום הנוכחי
-         * @returns {Promise<Array>} מערך של שירותים רלוונטיים
-         */
-        const findServices = async () => {
-            const services = await prisma.service.findMany({
+        // פונקציה למציאת שירותי רכבת רלוונטיים
+        async function findServices() {
+            console.log('findMany');
+            const services = await prisma.lineService.findMany({
                 where: {
-                    exit: exit,
-                    destination: destination,
-                    OR: [
-                        {
-                            regularService: {
-                                schedules: {
-                                    some: {
-                                        startTime: {
-                                            gte: startOfDay,
-                                            lt: endOfDay
-                                        }
-                                    }
-                                }
-                            }
-                        },
-                        {
-                            oneTimeService: {
-                                date: {
-                                    gte: startOfDay,
-                                    lt: endOfDay
-                                }
-                            }
-                        }
-                    ],
-                    availableSeatsA: {
-                        gte: numPassengers
-                    }
+                    line: {
+                        exit: exit || "", 
+                        destination: destination || "",
+                    },
+                    hour: {
+                        gte: hour,
+                    },
                 },
                 include: {
-                    regularService: {
-                        include: {
-                            schedules: true
-                        }
-                    },
-                    oneTimeService: true
-                }
+                    line: true, // הוספת פרטי הקו
+                },
+                orderBy: {
+                    hour: "asc", // מיון לפי שעה
+                },
             });
 
-            // מיון שירותים לפי startTime (בשירותים רגילים)
-            const sortedServices = services.sort((a, b) => {
-                const timeA = a.regularService?.schedules[0]?.startTime || a.oneTimeService?.date;
-                const timeB = b.regularService?.schedules[0]?.startTime || b.oneTimeService?.date;
-
-                if (!timeA) return 1;
-                if (!timeB) return -1;
-                return new Date(timeA).getTime() - new Date(timeB).getTime();
+            // חיפוש השירותים על פי מספר מקומות פנויים
+            const filteredServices = services.filter(service => {
+                return service.availableSeats >= numPassengers;
             });
 
-            console.log(`Services found:`, sortedServices.length);
-            return sortedServices;
-        };
+            // החזרת 3 שירותים הראשונים
+            return filteredServices.slice(0, 3);
+        }
 
-        // שליפת השירותים הרלוונטיים
         let relevantServices = await findServices();
+        console.log('relevatServices', relevantServices);
 
-        // סינון התוצאות להחזרת השירות המבוקש ושלושת הבאים אחריו
-        relevantServices = relevantServices.slice(0, 4);
-
-        // החזרת תוצאה עם השירותים שנמצאו
+        // אם יש שירותים רלוונטיים, מחזירים אותם
         if (relevantServices.length > 0) {
             return NextResponse.json({
                 message: "Relevant services retrieved successfully",
@@ -125,4 +90,5 @@ export async function GET(request: Request) {
             error: (error as Error).message
         });
     }
+   
 }
