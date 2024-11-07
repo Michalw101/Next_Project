@@ -17,7 +17,7 @@ export default function LoginForm() {
     };
 
     try {
-      const credential = await signIn("credentials", { ...values , callbackUrl:"/" });
+      const credential = await signIn("credentials", { ...values, callbackUrl: "/" });
       console.log("credential", credential);
     } catch (error) {
       console.log(error);
@@ -50,66 +50,75 @@ export default function LoginForm() {
   }
 
   return (
-    <div className="flex flex-col w-full justify-center items-center my-5">
-      <form onSubmit={isLogin ? handleSubmit : register} className="w-full">
-        <h1 className="text-center text-xl font-semibold">
-          {isLogin ? "Login" : "Register"}
-        </h1>
-        {!isLogin && (
+    <div
+      className="pt-16 w-full h-screen bg-no-repeat bg-center bg-fixed"
+      style={{
+        backgroundImage: 'url(/images/profile_pic.jpg)',
+        backgroundSize: 'cover',
+      }}
+    >
+      <div className="flex flex-col w-full justify-center items-center my-5">
+        <form onSubmit={isLogin ? handleSubmit : register} className="w-full">
+          <h1 className="text-center text-xl font-semibold">
+            {isLogin ? "Login" : "Register"}
+          </h1>
+          {!isLogin && (
+            <InputLogin
+              label="Name"
+              type="name"
+              id="name"
+              name="name"
+              placeholder="Type Name..."
+            />
+          )}
           <InputLogin
-            label="Name"
-            type="name"
-            id="name"
-            name="name"
-            placeholder="Type Name..."
+            label="Email"
+            type="email"
+            id="email"
+            name="email"
+            placeholder="Type Email..."
           />
-        )}
-        <InputLogin
-          label="Email"
-          type="email"
-          id="email"
-          name="email"
-          placeholder="Type Email..."
-        />
-        <InputLogin
-          label="Password"
-          type="password"
-          id="password"
-          name="password"
-          placeholder="Type Password..."
-        />
-        <p
-          onClick={() => setIsLogin((prev) => !prev)}
-          className="text-center text-blue-500 text-sm cursor-pointer"
-        >
-          You haven't Account? - Sign Up
-        </p>
-        <div className="w-full flex justify-center items-center">
-          <button
-            type="submit"
-            className="focus:outline-none w-[80%] text-white bg-purple-700 hover:bg-purple-800 
+          <InputLogin
+            label="Password"
+            type="password"
+            id="password"
+            name="password"
+            placeholder="Type Password..."
+          />
+          <p
+            onClick={() => setIsLogin((prev) => !prev)}
+            className="text-center text-blue-500 text-sm cursor-pointer"
+          >
+            You haven't Account? - Sign Up
+          </p>
+          <div className="w-full flex justify-center items-center">
+            <button
+              type="submit"
+              className="focus:outline-none w-[80%] text-white bg-purple-700 hover:bg-purple-800 
          focus:ring-4 focus:ring-purple-300 font-medium rounded-lg text-sm px-5 py-2.5
           my-5 dark:bg-purple-600 dark:hover:bg-purple-700 dark:focus:ring-purple-900"
-          >
-            {isLogin ? "Sign In" : "Sign Up"}
-          </button>
-        </div>
-      </form>
-      {/* Google BTN */}
-      <div className="flex w-full flex-col justify-center items-center gap-4">
-        <button
-          onClick={() => signIn("google", {callbackUrl:"/"})}
-          className="flex w-[80%] items-center justify-center bg-white
+            >
+              {isLogin ? "Sign In" : "Sign Up"}
+            </button>
+          </div>
+        </form>
+        {/* Google BTN */}
+        <div className="flex w-full flex-col justify-center items-center gap-4">
+          <button
+            onClick={() => signIn("google", { callbackUrl: "/" })}
+            className="flex w-[80%] items-center justify-center bg-white
          dark:bg-gray-900 border border-gray-300 rounded-lg 
          shadow-md px-6 py-2 text-sm font-medium text-gray-800
           dark:text-white hover:bg-gray-200 focus:outline-none 
           focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
-        >
-          <FaGoogle className="h-6 w-6 mr-2" />
-          <span>Continue with Google</span>
-        </button>
+          >
+            <FaGoogle className="h-6 w-6 mr-2" />
+            <span>Continue with Google</span>
+          </button>
+        </div>
       </div>
     </div>
+
   );
 }
 

@@ -22,20 +22,12 @@ model Service {
   availableSeatsA Int
   availableSeatsB Int
   typeId          String?         @db.ObjectId
-  // type            Type?           @relation("ServiceType", fields: [typeId], references: [id])
   regularService  RegularService? @relation("RegularServiceService")  
   oneTimeService  OneTimeService? @relation("OneTimeServiceService") 
 }
 
-// model Type {
-//   id      String    @id @default(auto()) @map("_id") @db.ObjectId
-//   name    String
-//   services Service[] @relation("ServiceType") 
-// }
-
 model RegularService {
   id             String            @id @default(auto()) @map("_id") @db.ObjectId
-  frequency      String
   startTime      DateTime
   endDate        DateTime?
   service        Service           @relation("RegularServiceService", fields: [serviceId], references: [id])
@@ -55,7 +47,7 @@ model ServiceSchedule {
   dayOfWeek        Int
   startTime        DateTime
   endTime          DateTime?
-  frequency        Int
+  frequency        String
   status           String?
   regularService   RegularService @relation("RegularServiceSchedules", fields: [regularServiceId], references: [id])
   regularServiceId String         @db.ObjectId
