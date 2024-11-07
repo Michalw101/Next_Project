@@ -4,7 +4,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import axios from "axios";
 
 function Search() {
-  const [aduls, setAduls] = useState<number>(1);
+  const [adults, setAdults] = useState<number>(1);
   const [children, setChildren] = useState<number>(0);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [fromLocation, setFromLocation] = useState<string>("");
@@ -22,12 +22,12 @@ function Search() {
   const closeModal = () => setIsModalOpen(false);
 
   const handleAdulsChange = (increment: number) => {
-    if (increment < 0 && aduls === 1 && children === 0) return;
-    setAduls(Math.max(0, aduls + increment));
+    if (increment < 0 && adults === 1 && children === 0) return;
+    setAdults(Math.max(0, adults + increment));
   };
 
   const handleChildrenChange = (increment: number) => {
-    if (increment < 0 && children === 0 && aduls === 1) return;
+    if (increment < 0 && children === 0 && adults === 1) return;
     setChildren(Math.max(0, children + increment));
   };
 
@@ -55,7 +55,7 @@ function Search() {
   };
 
   const getPassengerLabel = () => {
-    const adulLabel = aduls > 0 ? `${aduls === 1 ? "1 adul" : `${aduls} aduls`}` : "";
+    const adulLabel = adults > 0 ? `${adults === 1 ? "1 adult" : `${adults} adults`}` : "";
     const childrenLabel = children > 0 ? `${children === 1 ? "1 child" : `${children} children`}` : "";
     
     return [adulLabel, childrenLabel].filter(Boolean).join(" and ") || "No passengers";
@@ -67,14 +67,15 @@ function Search() {
       return;
     }
 
-    const totalPassengers = aduls + children; // Calculate total number of passengers
+    const totalPassengers = adults + children; // Calculate total number of passengers
     const queryParams = new URLSearchParams({
       fromLocation,
       toLocation,
       time: departureDate.toISOString(),
-      aduls: aduls.toString(),
+      adults: adults.toString(),
       children: children.toString(),
     }).toString();
+     
 
     try {
       const response = await fetch(`http://localhost:3000/api/services?${queryParams}`, {
@@ -88,12 +89,11 @@ function Search() {
       
       // Check if there are available services
       if (data.services && data.services.length > 0) {
-        const availableServices = data.services.filter((service:any) => {
-          // Check if available seats are enough
-          return service.availableSeatsA >= aduls && service.availableSeatsB >= children;
-        });
-
+        const availableServices = data.services.filter((service: any) => 
+          service.availableSeatsA >= adults && service.availableSeatsB >= children
+        );
         if (availableServices.length > 0) {
+          
           setResults(availableServices); // Save available results
         } else {
           alert("No seats available for the requested number of passengers.");

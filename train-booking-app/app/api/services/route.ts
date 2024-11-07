@@ -8,6 +8,7 @@ export async function GET(request: Request) {
         const origin = searchParams.get("fromLocation");
         const destination = searchParams.get("toLocation");
         const requestedTime = searchParams.get("time");
+        console.log("requestedTime",requestedTime)
 
         // בדוק אם יש פרמטרים חסרים
         if (!origin || !destination || !requestedTime) {
