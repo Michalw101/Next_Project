@@ -14,43 +14,19 @@ model Users {
   password String?
 }
 
-model Service {
-  id              String          @id @default(auto()) @map("_id") @db.ObjectId
-  exit            String
-  destination     String
-  price           Int
-  availableSeatsA Int
-  availableSeatsB Int
-  typeId          String?         @db.ObjectId
-  regularService  RegularService? @relation("RegularServiceService")  
-  oneTimeService  OneTimeService? @relation("OneTimeServiceService") 
+model Line {
+  id           String        @id @default(auto()) @map("_id") @db.ObjectId
+  exit         String
+  destination  String
+  price        Int
+  seats        Int
+  lineServices LineService[] @relation("LineToLineService") // שדה הקשר למודל LineService
 }
 
-
-model RegularService {
-  id             String            @id @default(auto()) @map("_id") @db.ObjectId
-  frequency      String
-  startTime      DateTime
-  endDate        DateTime?
-  service        Service           @relation("RegularServiceService", fields: [serviceId], references: [id])
-  serviceId      String            @unique @db.ObjectId
-  schedules      ServiceSchedule[] @relation("RegularServiceSchedules")
-}
-
-model OneTimeService {
-  id        String   @id @default(auto()) @map("_id") @db.ObjectId
-  date      DateTime
-  service   Service  @relation("OneTimeServiceService", fields: [serviceId], references: [id])
-  serviceId String   @unique @db.ObjectId
-}
-
-model ServiceSchedule {
-  id               String         @id @default(auto()) @map("_id") @db.ObjectId
-  dayOfWeek        Int
-  startTime        DateTime
-  endTime          DateTime?
-  frequency        Int
-  status           String?
-  regularService   RegularService @relation("RegularServiceSchedules", fields: [regularServiceId], references: [id])
-  regularServiceId String         @db.ObjectId
+model LineService {
+  id             String @id @default(auto()) @map("_id") @db.ObjectId
+  hour           Int
+  availableSeats Int
+  line           Line   @relation("LineToLineService", fields: [lineId], references: [id])
+  lineId         String @db.ObjectId
 }

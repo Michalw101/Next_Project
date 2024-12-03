@@ -1,6 +1,6 @@
 import React from 'react';
 import Image from 'next/image';
-import aboutPic from '../../assets/about_pic.jpg';
+import aboutPic from '/images/about_pic.jpg'
 
 
 const About: React.FC = () => {
@@ -14,6 +14,7 @@ const About: React.FC = () => {
           We aim to provide a smooth experience that connects you to your destination with just a few clicks.
           Whether you're planning a quick commute or a scenic journey, we are here to make your travels effortless and enjoyable.
         </p>
+        
 
         <div className="flex flex-col lg:flex-row items-center gap-8">
           <div className="lg:w-1/2">

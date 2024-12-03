@@ -5,10 +5,19 @@ import Search from '../Search';
 
 
 function HomePage() {
-  
+
   return (
     <>
-      <Search />
+      <div
+        className="w-full h-screen bg-no-repeat bg-center bg-fixed"
+        style={{
+          backgroundImage: 'url(/images/about_pic.jpg)',
+          backgroundSize: 'cover',
+        }}
+      >
+
+        <Search />
+      </div>
     </>
   );
 }

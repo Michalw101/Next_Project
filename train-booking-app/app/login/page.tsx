@@ -1,8 +1,8 @@
-import Login from "../../components/pages/login"
+import LoginForm from "../../components/pages/LoginForm"
 
 function page() {
   return (
-    <Login />
+    <LoginForm />
   )
 }
 
