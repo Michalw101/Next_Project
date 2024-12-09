@@ -10,7 +10,7 @@ function Dashboard() {
         <>
         <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br />
             <div>
-                <nav className="bg-gray-800 text-white p-4">
+                <nav className="bg-gray-800 text-white p-4 mt-0">
                     <ul className="flex justify-around">
                         <li>
                             <button

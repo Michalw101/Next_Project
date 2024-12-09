@@ -7,26 +7,66 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Users {
-  id       String  @id @default(auto()) @map("_id") @db.ObjectId
-  email    String  @unique
-  name     String?
-  password String?
-}
 
 model Line {
-  id           String        @id @default(auto()) @map("_id") @db.ObjectId
-  exit         String
-  destination  String
-  price        Int
-  seats        Int
-  lineServices LineService[] @relation("LineToLineService") // שדה הקשר למודל LineService
+  id_line     String   @id @default(auto()) @map("_id") @db.ObjectId
+  exit        String
+  destination String
+  price       Int
+  LineDetails LineDetails[]
 }
 
-model LineService {
-  id             String @id @default(auto()) @map("_id") @db.ObjectId
-  hour           Int
+// סכמת פרטי קווים
+model LineDetails {
+  id_lineDetails String   @id @default(auto()) @map("_id") @db.ObjectId
+  date        String
+  departureTime  String
+  arrivalTime    String
   availableSeats Int
-  line           Line   @relation("LineToLineService", fields: [lineId], references: [id])
-  lineId         String @db.ObjectId
+  stations       String[]
+  id_Line        String @db.ObjectId
+  Line           Line     @relation(fields: [id_Line], references: [id_line])
+  Order Order[]
+  UserFavorites  UserFavorites[]
+}
+
+// סכמת משתמשים
+model Users {
+  id          String @id @default(auto()) @map("_id") @db.ObjectId
+  firstName   String
+  lastName    String
+  phoneNumber String
+  email       String @unique
+  Order    Order[]
+  UserFavorites  UserFavorites[]
+  Password Password?
+}
+
+// סכמת הזמנות
+model Order {
+  id_orders      String      @id @default(auto()) @map("_id") @db.ObjectId
+  numOfSeats     Int // מספר הכרטיסים שהוזמנו
+  orderDate      DateTime    @default(now()) // תאריך יצירת ההזמנה
+  id_User        String      @db.ObjectId
+  User           Users       @relation(fields: [id_User], references: [id])
+  id_LineDetails String      @db.ObjectId
+  lineDetails    LineDetails @relation(fields: [id_LineDetails], references: [id_lineDetails]) // רשימה של פרטי נסיעה
+}
+
+// סכמת סיסמאות
+model Password {
+  id_password String @id @default(auto()) @map("_id") @db.ObjectId
+  id          String @unique @db.ObjectId 
+  password    String
+  User        Users  @relation(fields: [id], references: [id])
+}
+
+model UserFavorites {
+  id_favorites  String @id @default(auto()) @map("_id") @db.ObjectId
+  id_User        String      @db.ObjectId
+  User           Users       @relation(fields: [id_User], references: [id])
+  id_LineDetails String      @db.ObjectId
+  lineDetails    LineDetails @relation(fields: [id_LineDetails], references: [id_lineDetails]) 
+
+ 
 }

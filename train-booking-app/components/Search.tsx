@@ -37,7 +37,7 @@ function Search() {
     } else if (currentField === "to") {
       setToLocation(suggestion);
     }
-    setSuggestions([]); // מנקה את ההצעות לאחר הבחירה
+    setSuggestions([]); 
   };
 
 
@@ -214,10 +214,8 @@ function Search() {
             <h2 className="text-lg font-bold mb-4">Available Routes</h2>
             <div className="grid gap-4">
 
-
-              {results.map((result, index) => (
-                <Service index={index} result={result} />
-              ))}
+                <Service toLocation={toLocation} fromLocation={fromLocation} results={results} />
+            
             </div>
           </div>
         )}
@@ -229,39 +227,93 @@ function Search() {
 export default Search;
 
 type ServiceProps = {
-  index: number;
-  result: {
+  toLocation: string;
+  fromLocation: string;
+  results: {
     line: {
       id: string;
-      exit: string;
-      destination: string;
       price: number;
       availableSeats: number;
     };
-  } & {
     id: string;
     hour: number;
+    stations: string[];
     lineId: string;
+  }[];
+};
+
+
+
+
+
+const Service: React.FC<ServiceProps> = ({ toLocation, fromLocation, results }) => {
+ 
+  const [expandedService, setExpandedService] = useState<string | null>(null);
+
+  const toggleExpand = (id: string) => {
+    setExpandedService(expandedService === id ? null : id);
   };
-}
 
+  const filterResultsByLocation = (stations: string[]) => {
+    const fromIndex = stations.indexOf(fromLocation);
+    const toIndex = stations.indexOf(toLocation);
 
+    if (fromIndex === -1 || toIndex === -1 || fromIndex > toIndex) {
+      return []; // אם התחנות לא נמצאו או לא בסדר הנכון
+    }
+    
+    return stations.slice(fromIndex, toIndex + 1); // חותך את תחנות המסלול לפי מיקום ההתחלה והסיום
+  };
 
-const Service: React.FC<ServiceProps> = ({ index, result }) => {
   return (
-    <div key={index} className="border p-4 rounded shadow-md relative">
-      <StarButton />
-      <h3 className="text-md font-semibold">
-        {result.line.exit} → {result.line.destination}
-      </h3>
-      <p>Price: ${result.line.price}</p>
-      <p>Hour: {result.hour}:00</p>
-      <button
-        className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded mt-4"
-      // onClick={selectService}
-      >
-        Select
-      </button>
+    <div className="mt-6">
+      <h2 className="text-lg font-bold mb-4">Available Routes</h2>
+      <div className="grid gap-4">
+        {results.map((result, index) => {
+          const filteredStations = filterResultsByLocation(result.stations);
+
+          return (
+            <div key={index} className="border p-4 rounded shadow-md relative">
+              <StarButton />
+              <h3 className="text-md font-semibold">
+                {/* הצגת התחנות הראשונה והאחרונה עם חץ ושלוש נקודות */}
+                {filteredStations.length > 0 ? (
+                  <>
+                    {filteredStations[0]} →{" "}
+                    {filteredStations.length > 2 ? (
+                      <>
+                        <span onClick={() => toggleExpand(result.id)} className="text-blue-500 cursor-pointer">
+                          ...
+                        </span>{" "}
+                        {filteredStations[filteredStations.length - 1]}
+                      </>
+                    ) : (
+                      filteredStations[filteredStations.length - 1]
+                    )}
+                  </>
+                ) : (
+                  "No valid route"
+                )}
+              </h3>
+              <p>Price: ${result?.line?.price ?? "N/A"}</p>
+              <p>Hour: {result?.hour}:00</p>
+              {expandedService === result.id && filteredStations.length > 2 && (
+                <div className="mt-2 text-gray-700">
+                  <h4>Intermediate Stations:</h4>
+                  <ul>
+                    {filteredStations.slice(1, filteredStations.length - 1).map((station, i) => (
+                      <li key={i}>{station}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+              <button className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded mt-4">
+                Select
+              </button>
+            </div>
+          );
+        })}
+      </div>
     </div>
   );
 };
