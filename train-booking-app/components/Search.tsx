@@ -1,4 +1,5 @@
-import React, { useState, ChangeEvent } from "react";
+import React, { useState, ChangeEvent, useEffect } from "react";
+import StarButton from "./StarButton";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { CiStar } from "react-icons/ci";
@@ -13,6 +14,7 @@ function Search() {
   const [currentField, setCurrentField] = useState<"from" | "to" | null>(null);
   const [results, setResults] = useState<any[]>([]); // State for storing fetched results
 
+
   // Example locations
   const cities = require("cities");
   const locations: string[] = cities.findByState("NJ").map((city: any) => city.city);
@@ -20,10 +22,10 @@ function Search() {
   const handleLocationChange = (e: ChangeEvent<HTMLInputElement>, field: "from" | "to") => {
     const value = e.target.value;
     if (field === "from") {
-      setFromLocation(value);
+      setFromLocation("West Kole");
       setCurrentField("from");
     } else {
-      setToLocation(value);
+      setToLocation("Abbigailborough");
       setCurrentField("to");
     }
     setSuggestions(
@@ -100,6 +102,10 @@ function Search() {
       alert("Error checking trips. Please try again later.");
     }
   };
+
+  useEffect(() => {
+    console.log('Updated results:', results);
+  }, [results]);
 
   return (
 
@@ -230,13 +236,13 @@ type ServiceProps = {
   toLocation: string;
   fromLocation: string;
   results: {
-    line: {
+    Line: {
       id: string;
       price: number;
       availableSeats: number;
     };
     id: string;
-    hour: number;
+    departureTime: number;
     stations: string[];
     lineId: string;
   }[];
@@ -249,10 +255,16 @@ type ServiceProps = {
 const Service: React.FC<ServiceProps> = ({ toLocation, fromLocation, results }) => {
  
   const [expandedService, setExpandedService] = useState<string | null>(null);
-
+  const [selectedService , setSelectedSercive] = useState(false);
   const toggleExpand = (id: string) => {
     setExpandedService(expandedService === id ? null : id);
   };
+
+  useEffect(() => {
+    console.log('newwwwwwwww Updated results:', results);
+    if(results&&results[0]&&results[0].departureTime)
+    console.log('newwwwwwwww:',  results[0].departureTime);
+  }, [results]);
 
   const filterResultsByLocation = (stations: string[]) => {
     const fromIndex = stations.indexOf(fromLocation);
@@ -271,7 +283,6 @@ const Service: React.FC<ServiceProps> = ({ toLocation, fromLocation, results }) 
       <div className="grid gap-4">
         {results.map((result, index) => {
           const filteredStations = filterResultsByLocation(result.stations);
-
           return (
             <div key={index} className="border p-4 rounded shadow-md relative">
               <StarButton />
@@ -295,8 +306,8 @@ const Service: React.FC<ServiceProps> = ({ toLocation, fromLocation, results }) 
                   "No valid route"
                 )}
               </h3>
-              <p>Price: ${result?.line?.price ?? "N/A"}</p>
-              <p>Hour: {result?.hour}:00</p>
+              <p>Price: {(results&&result&&result.Line) && result.Line.price}$</p>
+              <p>Hour: {(results&&result&&result.departureTime) && result.departureTime}</p>
               {expandedService === result.id && filteredStations.length > 2 && (
                 <div className="mt-2 text-gray-700">
                   <h4>Intermediate Stations:</h4>
@@ -307,7 +318,7 @@ const Service: React.FC<ServiceProps> = ({ toLocation, fromLocation, results }) 
                   </ul>
                 </div>
               )}
-              <button className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded mt-4">
+              <button onClick={()=>{setSelectedSercive(true)}} className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded mt-4">
                 Select
               </button>
             </div>
@@ -320,33 +331,5 @@ const Service: React.FC<ServiceProps> = ({ toLocation, fromLocation, results }) 
 
 
 
-const StarButton = () => {
-  const [isFavorited, setIsFavorited] = useState(false);
 
-  const handleCheckboxChange = () => {
-    setIsFavorited(!isFavorited);
-    // כאן אפשר להוסיף לוגיקה לשמירת המצב במועדפים
-    console.log(isFavorited ? 'Removed from favorites' : 'Added to favorites');
-  };
-
-  return (
-    <label className="absolute top-2 right-2">
-      <input
-        type="checkbox"
-        className="absolute opacity-0 h-0 w-0 cursor-pointer peer"
-        checked={isFavorited}
-        onChange={handleCheckboxChange}
-      />
-      <svg
-        className="h-6 w-6 fill-gray-500 transition-transform duration-300 peer-checked:fill-yellow-300 hover:scale-110"
-        xmlns="http://www.w3.org/2000/svg"
-        viewBox="0 0 24 24"
-      >
-        <g>
-          <path d="M9.362,9.158c0,0-3.16,0.35-5.268,0.584c-0.19,0.023-0.358,0.15-0.421,0.343s0,0.394,0.14,0.521    c1.566,1.429,3.919,3.569,3.919,3.569c-0.002,0-0.646,3.113-1.074,5.19c-0.036,0.188,0.032,0.387,0.196,0.506    c0.163,0.119,0.373,0.121,0.538,0.028c1.844-1.048,4.606-2.624,4.606-2.624s2.763,1.576,4.604,2.625    c0.168,0.092,0.378,0.09,0.541-0.029c0.164-0.119,0.232-0.318,0.195-0.505c-0.428-2.078-1.071-5.191-1.071-5.191    s2.353-2.14,3.919-3.566c0.14-0.131,0.202-0.332,0.14-0.524s-0.23-0.319-0.42-0.341c-2.108-0.236-5.269-0.586-5.269-0.586    s-1.31-2.898-2.183-4.83c-0.082-0.173-0.254-0.294-0.456-0.294s-0.375,0.122-0.453,0.294C10.671,6.26,9.362,9.158,9.362,9.158z"></path>
-        </g>
-      </svg>
-    </label>
-  );
-};
 
