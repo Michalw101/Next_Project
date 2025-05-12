@@ -42,18 +42,12 @@ export const authOptions: NextAuthOptions = {
     async signIn({ user, account }) {
       if(!user || !user.email) return false;
       if(account?.provider === "google"){
-        await prisma.users.upsert({
-          where:{
-            email:user.email
-          },
-          update: {
-            name: user.name,
-          },
-          create: {
-            email:user.email,
-            name:user.name,
-          },
-        })
+        const existingUser = await prisma.users.upsert({
+          where: { email: user.email },
+          update: { name: user.name },
+          create: { email: user.email, name: user.name },
+        });
+        user.id = existingUser.id;
       }
       return true;
     },
@@ -70,7 +64,7 @@ export const authOptions: NextAuthOptions = {
         ...session,
         user:{
           ...session.user,
-          id:token.id
+          id:token.id 
         }
       };
     },

@@ -33,13 +33,12 @@ model LineDetails {
 // סכמת משתמשים
 model Users {
   id          String @id @default(auto()) @map("_id") @db.ObjectId
-  firstName   String
-  lastName    String
-  phoneNumber String
+  name   String
+  phoneNumber String?
   email       String @unique
   Order    Order[]
   UserFavorites  UserFavorites[]
-  Password Password?
+  password Password?
 }
 
 // סכמת הזמנות

@@ -1,6 +1,19 @@
+"use client"
+
 import { TbTrain } from "react-icons/tb";
+import React, { useState, useEffect } from "react";
 
 export default function Nav() {
+    const [user, setUser] = useState(null);
+
+    useEffect(() => {
+        // בודק אם יש מידע על המשתמש ב-localStorage
+        const storedUser = localStorage.getItem("user");
+        if (storedUser) {
+            setUser(JSON.parse(storedUser));  // אם יש מידע, מעדכן את הסטייט
+        }
+    }, []);
+
     return (
         <nav className="bg-white dark:bg-gray-900 fixed w-full z-20 top-0 start-0 border-b border-gray-200 dark:border-gray-600">
             <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
@@ -24,16 +37,21 @@ export default function Nav() {
                                 Login
                             </a>
                         </li>
-                        <li>
-                            <a href="/profile" className="hover:text-yellow-400 transition-colors duration-200">
-                                Profile
-                            </a>
-                        </li>
-                        <li>
-                            <a href="/dashboard" className="hover:text-yellow-400 transition-colors duration-200">
-                                Dashboard
-                            </a>
-                        </li>
+                        {user &&
+                        <> <li>
+                         <a href="/profile" className="hover:text-yellow-400 transition-colors duration-200">
+                             Profile
+                         </a>
+                     </li>
+                     <li>
+                         <a href="/dashboard" className="hover:text-yellow-400 transition-colors duration-200">
+                             Dashboard
+                         </a>
+                     </li>   
+                     </>}
+                        
+                   
+                       
                     </ul>
                 </div>
             </div>
