@@ -5,9 +5,6 @@ import axios from "axios";
 
 
 export const POST = async (req: Request) => {
-
-
-
   try{
     const token = await generateToken();
     if (!token) throw new Error("Token not exists");

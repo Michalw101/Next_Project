@@ -5,7 +5,6 @@ import prisma from "@/prisma/client";
 export const POST = async (req: Request) => {
   const { id, lineDetailsId, numOfSeats, userId } = await req.json();
   try {
-    console.log("112", lineDetailsId);
     const token = await generateToken();
     if (!token) throw new Error("Token not Exists");
 
@@ -23,7 +22,7 @@ export const POST = async (req: Request) => {
 
     const data = await response.json();
 
-    // Create New Order in Database
+    
     const order = await addOrder(lineDetailsId, numOfSeats, userId);
     return NextResponse.json(
       { success: true, message: "success capture Order", data },
@@ -40,7 +39,6 @@ export const POST = async (req: Request) => {
 
 const addOrder = async function (lineDetailsId:any,numOfSeats:any,userId:any) {
   try{
- console.log("LLLLL", lineDetailsId);
     const lineDetails = await prisma.lineDetails.findUnique({
       where: { id_lineDetails: lineDetailsId },
     });
